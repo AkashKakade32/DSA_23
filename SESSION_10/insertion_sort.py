@@ -12,4 +12,18 @@ def insert_at_sorting_position(L, N:int):
 def insertion_sort(L):
     N = 2
     while N<=len(L):
-        
+        insert_at_sorting_position(L,N)
+        N = N+1
+
+def display(L):
+    for i in range(len(L)):
+        print(i, L[i])
+
+def main():
+    L = [63,45,78,85,96,11,15,17,68,55]
+    print("Before Sort : ", L)
+    insertion_sort(L)
+    print("After Sort : ", L)
+    display(L)
+
+main()        
