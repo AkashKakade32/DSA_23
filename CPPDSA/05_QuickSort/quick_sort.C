@@ -121,6 +121,3 @@ void quick_sort(int *arr, int p, int r)
 }
 
 
-
-
-

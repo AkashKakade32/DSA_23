@@ -50,7 +50,7 @@ int main(int argc, char *argv[], char *envp[])
   pTime = clock() - pTime;
   vTime = time(NULL) - vTime;
 
-  //outputArray(arr, size);
+  outputArray(arr, size);
   
   printf("Total Processor Time : %f, Total Virtual Time : %lu\n",((float)pTime/CLOCKS_PER_SEC), vTime);
   
