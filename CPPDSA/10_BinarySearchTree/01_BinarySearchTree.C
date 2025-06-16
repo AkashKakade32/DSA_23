@@ -2,11 +2,12 @@
 #include<stdlib.h>
 
 #define True 1
+#define False 0
 
 typedef struct node{
   int data;
-  struct node *right;
   struct node *left;
+  struct node *right;
   struct node *parent;
 }Node;
 
@@ -15,19 +16,49 @@ int main(int argc, char *argv[], char *envp[])
   //Function Declarations
   void insertNode(Node **, int);
   void freeTree(Node *);
+  void inorder(Node *);
+  void preorder(Node *);
+  void postorder(Node *);
+  Node *searchNode(Node *, int);
 
-  //Variable Declarations
+  //Varibale Declarations
   Node *root = NULL;
+  Node *currentNode = NULL;
 
   //Code
   insertNode(&root, 100);
-  insertNode(&root, 200);
-  insertNode(&root, 50);
+  insertNode(&root, 70);
+  insertNode(&root, 80);
   insertNode(&root, 60);
-  
-  printf("Address of root node : %p \n", (void *)root);
+  insertNode(&root, 40);
+  insertNode(&root, 110);
+  insertNode(&root, 120);
+  insertNode(&root, 105);
+  insertNode(&root, 118);
 
+  printf("\n\n");
+  printf("Inorder Traversal : ");
+  inorder(root);
+  printf("\n\n");
+
+  printf("Preorder Traversal : ");
+  preorder(root);
+  printf("\n\n");
+
+  printf("Postorder Traversal : ");
+  postorder(root);
+  printf("\n\n");
+
+  currentNode = searchNode(root, 90);
+  if(currentNode != NULL)
+  {
+    
+    printf("currentNode : %p = %d || Parent : %p\n\n", (void *)currentNode, currentNode->data, (void *)currentNode->parent);
+  }
+  
+  //Free the tree
   freeTree(root);
+  root = NULL;
 
   return(0);
 }
@@ -38,7 +69,6 @@ Node *createNode(int newData)
   Node *newNode;
 
   //Code
-
   newNode = (Node *)malloc(sizeof(Node));
   if(newNode == NULL)
   {
@@ -50,7 +80,7 @@ Node *createNode(int newData)
   newNode->left = NULL;
   newNode->right = NULL;
   newNode->parent = NULL;
-  
+
   return(newNode);
 }
 
@@ -58,52 +88,129 @@ void insertNode(Node **root, int newData)
 {
   //Function Declarations
   Node *createNode(int);
-  
+
   //Variable Declarations
-  Node *temp;
   Node *newNode;
+  Node *run;
 
   //Code
   if(*root == NULL)
   {
     *root = createNode(newData);
-    printf("root node is created with : %p \n", (void *)*root);
+    printf("root is created : %p \n", (void *)*root);
+    return;
   }
   else {
-
-    temp = *root;
+    run = *root;
     newNode = createNode(newData);
 
     while(True)
     {
-      if(newData <= temp->data)
+      if(newData <= run->data)
       {
-        if(temp->left == NULL)
+        if(run->left == NULL)
         {
-          temp->left = newNode;
-          temp->left->parent = temp;
-          printf("newNode is inserted at left having address : %p ||| Parent : %p \n", (void *)newNode, (void *)temp);
+          run->left = newNode;
+          newNode->parent = run;
+          printf("newNode is inserted at left : %p = %d | Parent : %d \n", (void *)newNode, newNode->data, newNode->parent->data);
           break;
         }
         else {
-          temp = temp->left;
+          run = run->left;
         }
       }
       else {
-        if(temp->right == NULL)
+        if(run->right == NULL)
         {
-          temp->right = newNode;
-          temp->right->parent = temp;
-          printf("newNode is inserted at right having address : %p ||| Parent : %p \n", (void *)newNode, (void *)temp);
+          run->right = newNode;
+          newNode->parent = run;
+          printf("newNode is inserted at right : %p = %d | Parent : %d \n", (void *)newNode, newNode->data, newNode->parent->data);
           break;
         }
         else {
-          temp = temp->right;
+          run = run->right;
         }
       }
     }
   }
 
+}
+
+void inorder(Node *root)
+{
+  //Varibale Declarations
+  Node *run;
+
+  //Code
+  run = root;
+
+  if(run != NULL)
+  {
+    inorder(run->left);
+    printf("%d, ", run->data);
+    inorder(run->right);
+  }
+}
+
+void preorder(Node *root)
+{
+  //Variable Declarations
+  Node *run;
+
+  //Code
+  run = root;
+
+  if(run != NULL)
+  {
+    printf("%d, ", run->data);
+    preorder(run->left);
+    preorder(run->right);
+  }
+}
+
+void postorder(Node *root)
+{
+  //Varibale Declarations
+  Node *run;
+
+  //Code
+  run = root;
+
+  if(run != NULL)
+  {
+    postorder(run->left);
+    postorder(run->right);
+    printf("%d, ", run->data);
+  }
+}
+
+Node *searchNode(Node *root, int searchData)
+{
+  //Variable Declarations
+  Node *run;
+
+  //Code
+  run = root;
+
+  while(run != NULL)
+  {
+    if(searchData == run->data)
+    {
+      return(run);
+    }
+    else {
+      if(searchData <= run->data)
+      {
+        run = run->left;
+      }
+      else {
+        run = run->right;
+      }
+    }
+  }
+  
+  printf("searchData : %d is not found in the Tree \n", searchData);
+  return(NULL);
 }
 
 void freeTree(Node *root)
@@ -114,15 +221,6 @@ void freeTree(Node *root)
     freeTree(root->right);
     printf("We are freeing the node : %p \n", (void *)root);
     free(root);
+    root = NULL;
   }
 }
-
-
-
-
-
-
-
-
-
-
