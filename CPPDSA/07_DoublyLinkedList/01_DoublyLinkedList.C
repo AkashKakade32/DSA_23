@@ -42,7 +42,7 @@ int main(int argc, char *argv[], char *envp[])
   headNode->next = NULL;
   headNode->prev = NULL;
   
-  for(int i = 1; i < 6; i++)
+  /*for(int i = 1; i < 6; i++)
   {
     insertStart(&headNode, 10*i);
   }
@@ -50,6 +50,14 @@ int main(int argc, char *argv[], char *envp[])
   for(int i = 6; i<11; i++)
   {
     insertEnd(&headNode, 10*i);
+  }*/
+
+  int i = 0;
+
+  while(i < 1000)
+  {
+    insertStart(&headNode, (rand() % 1000));
+    i++;
   }
 
   printf("\nDisplaying the Doubly Linked List \n");

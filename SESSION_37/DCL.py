@@ -1,8 +1,8 @@
 class DNode:
     def __init__(self, newData:int):
         self.data = newData
-        self.prev = None
         self.next = None
+        self.prev = None
 
 class DoublyCircularLinkedList:
     def __init__(self):
@@ -31,8 +31,8 @@ class DoublyCircularLinkedList:
     def popStart(self)->int:
         rNode = self.headNode.next
 
-        self.headNode.next = rNode.next
-        rNode.next.prev = self.headNode
+        rNode.prev.next = rNode.next
+        rNode.next.prev = rNode.prev
 
         data = rNode.data
 
@@ -44,7 +44,7 @@ class DoublyCircularLinkedList:
         rNode = self.headNode.prev
 
         self.headNode.prev = rNode.prev
-        rNode.prev.next = self.headNode
+        rNode.prev.next = rNode.next
 
         data = rNode.data
 
@@ -52,32 +52,23 @@ class DoublyCircularLinkedList:
 
         return data
 
+    def getStart(self)->int:
+        return self.headNode.next.data
+
+    def getEnd(self)->int:
+        return self.headNode.prev.data
+
+    def isEmpty(self)->bool:
+        return self.headNode.next == self.headNode
+
+    
     def showList(self):
         run = self.headNode.next
+
         print('[START]', end='<->')
         while run != self.headNode:
-            print(f'[{run.data}]<->',end='')
+            print(f'[{run.data}]', end='<->')
             run = run.next
-
-        print("[END]")
-
-
-
-D1 = DoublyCircularLinkedList()
-
-D1.insertStart(10);
-D1.insertStart(20);
-D1.insertStart(30);
-D1.insertStart(40);
-
-D1.insertEnd(50);
-D1.insertEnd(60);
-
-D1.showList()
-
-print(f'Popped data is : {D1.popStart()}')
-
-print(f'Popped data from last is : {D1.popEnd()}')
-
-D1.showList()
-
+        print('[END]')
+    
+ 

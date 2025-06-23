@@ -1,5 +1,7 @@
 #include<iostream>
 
+#define CAP 1000
+
 class DNode{
   public:
   int data;
@@ -368,7 +370,7 @@ int main(int argc, char *argv[], char *envp[])
 
   std::cout<<"\n";
 
-  std::cout<<"----------Testing insertStart()----------\n";
+  /*std::cout<<"----------Testing insertStart()----------\n";
   for(int i = 1; i<6; i++)
   {
     L1.insertStart(10*i);
@@ -382,7 +384,30 @@ int main(int argc, char *argv[], char *envp[])
   {
     L1.insertEnd(10*i);
   }
+  L1.showList();*/
+
+  
+
+
+  
+
+  int i = 0;
+  
+  
+  while(i<1000)
+  {
+    L1.insertEnd((rand()%CAP));
+    i++;
+  }
+
+
   L1.showList();
+
+
+
+
+
+
 
   std::cout<<"\n";
 

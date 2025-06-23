@@ -10,71 +10,46 @@ typedef struct node{
   struct node *parent;
 }Node;
 
+
 int main(int argc, char *argv[], char *envp[])
 {
   //Function Declarations
   void insertNode(Node **, int);
-  void inorderPrint(Node *);
-  void preorderPrint(Node *);
-  void postorderPrint(Node *);
-  Node *searchNode(Node *, int);
-  Node *inorderSuccessor(Node *, int);
-  Node *preDeccessor(Node *, int);
+  void inorderTraversal(Node *);
+  void preorderTraversal(Node *);
+  void postorderTraversal(Node *);
+  int inorderSuccessor(Node *, int);
   void freeTree(Node *);
 
   //Variable Declarations
   Node *root = NULL;
-  int arr[9] = {100, 70, 60, 40, 80, 110, 105, 120, 118};
   int i = 0;
-  Node *currentNode = NULL;
 
   //Code
-  while(i < 9)
+  int arr[13] = {100, 70, 150, 50, 30, 65, 80, 40, 120, 170, 250, 130, 300};
+
+  for(i = 0; i<13; i++)
   {
     insertNode(&root, arr[i]);
-    i++;
   }
 
-  printf("\n");
-  printf("Inorder Traversal : ");
-  inorderPrint(root);
   printf("\n\n");
+  printf("Inorder Traversal : ");
+  inorderTraversal(root);
+  printf("[END]\n");
 
   printf("\n");
   printf("Preorder Traversal : ");
-  preorderPrint(root);
-  printf("\n\n");
+  preorderTraversal(root);
+  printf("[END]\n");
 
   printf("\n");
   printf("Postorder Traversal : ");
-  postorderPrint(root);
-  printf("\n\n");
+  postorderTraversal(root);
+  printf("[END]\n");
 
+  printf("Inorder Successor : %d \n", inorderSuccessor(root, 120));
 
-
-  currentNode = searchNode(root, 100);
-  if(currentNode == NULL)
-  {
-    printf("searchData is not present in the Tree \n");
-  }
-  else {
-    printf("searchData is present in the Tree : %p \n\n", (void *)currentNode);
-  }
-
-  currentNode = inorderSuccessor(root, 80);
-  if(currentNode != NULL)
-  {
-    printf("inorderSuccessor node is = %p : %d \n\n", (void *)currentNode, currentNode->data);
-  }
-
-  currentNode = preDeccessor(root, 80);
-  if(currentNode != NULL)
-  {
-    printf("preDeccessor node is = %p : %d \n\n", (void *)currentNode, currentNode->data);
-  }
-
-  
-  
   freeTree(root);
 
   return(0);
@@ -84,21 +59,22 @@ int main(int argc, char *argv[], char *envp[])
 Node *createNode(int newData)
 {
   //Variable Declarations
-  Node *newNode;
+  Node *newNode = NULL;
 
   //Code
   newNode = (Node *)malloc(sizeof(Node));
   if(newNode == NULL)
   {
-    printf("Failed to allocate the memory to the newNode \n");
+    printf("Failed to allocate memory to the newNode \n");
     exit(EXIT_FAILURE);
   }
 
   newNode->data = newData;
-  newNode->left = NULL;
-  newNode->right = NULL;
-  newNode->parent = NULL;
 
+  newNode->right = NULL;
+  newNode->left = NULL;
+  newNode->parent = NULL;
+  
   return(newNode);
 }
 
@@ -115,7 +91,7 @@ void insertNode(Node **root, int newData)
   if(*root == NULL)
   {
     *root = createNode(newData);
-    printf("root node is created : %p \n", (void *)*root);
+    printf("Root node is created : %p \n", (void *)*root);
   }
   else {
     newNode = createNode(newData);
@@ -148,9 +124,10 @@ void insertNode(Node **root, int newData)
       }
     }
   }
+
 }
 
-void inorderPrint(Node *root)
+void inorderTraversal(Node *root)
 {
   //Variable Declarations
   Node *run;
@@ -160,13 +137,13 @@ void inorderPrint(Node *root)
 
   if(run != NULL)
   {
-    inorderPrint(run->left);
-    printf("%d,",run->data);
-    inorderPrint(run->right);
+    inorderTraversal(run->left);
+    printf("[%d]->", run->data);
+    inorderTraversal(run->right);
   }
 }
 
-void preorderPrint(Node *root)
+void preorderTraversal(Node *root)
 {
   //Variable Declarations
   Node *run;
@@ -176,13 +153,13 @@ void preorderPrint(Node *root)
 
   if(run != NULL)
   {
-    printf("%d,",run->data);
-    preorderPrint(run->left);
-    preorderPrint(run->right);
+    printf("[%d]->", run->data);
+    preorderTraversal(run->left);
+    preorderTraversal(run->right);
   }
 }
 
-void postorderPrint(Node *root)
+void postorderTraversal(Node *root)
 {
   //Variable Declarations
   Node *run;
@@ -192,94 +169,11 @@ void postorderPrint(Node *root)
 
   if(run != NULL)
   {
-    postorderPrint(run->left);
-    postorderPrint(run->right);
-    printf("%d,", run->data);
+    postorderTraversal(run->left);
+    postorderTraversal(run->right);
+    printf("[%d]->", run->data);
   }
 }
-
-Node *inorderSuccessor(Node *root, int searchData)
-{
-  //Function Declarations
-  Node *searchNode(Node *, int);
-
-  //Variable Declarations
-  Node *currentNode;
-
-  currentNode = searchNode(root, searchData);
-  if(currentNode == NULL)
-  {
-    return(NULL);
-  }
-  else {
-    if(currentNode->right != NULL)
-    {
-      Node *temp = currentNode->right;
-
-      while(temp->left != NULL)
-      {
-        temp = temp->left;
-      }
-
-      return(temp);
-    }
-    else {
-      Node *x = currentNode;
-      Node *y = currentNode->parent;
-
-      while((y != NULL)&&(x == y->right))
-      {
-        x = y;
-        y = y->parent;
-      }
-      
-      return(y);
-
-    }
-  }
-}
-
-Node *preDeccessor(Node *root, int searchData)
-{
-  //Function Declarations
-  Node *searchNode(Node *, int);
-
-  //Variable Declarations
-  Node *currentNode;
-
-  currentNode = searchNode(root, searchData);
-  if(currentNode == NULL)
-  {
-    return(NULL);
-  }
-  else {
-    if(currentNode->left != NULL)
-    {
-      Node *temp = currentNode->left;
-
-      while(temp->right != NULL)
-      {
-        temp = temp->right;
-      }
-
-      return(temp);
-    }
-    else {
-      Node *x = currentNode;
-      Node *y = currentNode->parent;
-
-      while((y != NULL)&&(x == y->left))
-      {
-        x = y;
-        y = y->parent;
-      }
-      
-      return(y);
-
-    }
-  }
-}
-
 
 Node *searchNode(Node *root, int searchData)
 {
@@ -289,14 +183,14 @@ Node *searchNode(Node *root, int searchData)
   //Code
   run = root;
 
-  while(True)
+  while(run != NULL)
   {
     if(run->data == searchData)
     {
       return(run);
     }
     else {
-      if(searchData <= run->data)
+      if(searchData < run->data)
       {
         run = run->left;
       }
@@ -309,15 +203,55 @@ Node *searchNode(Node *root, int searchData)
   return(NULL);
 }
 
+int inorderSuccessor(Node *root, int searchData)
+{
+  //Function Declarations
+  Node *searchNode(Node *, int);
+
+  //Variable Declarations
+  Node *run;
+  Node *currentNode;
+
+  //Code
+  currentNode = searchNode(root, searchData);
+  if(currentNode == NULL)
+  {
+    printf("searchData is not present in the Tree \n");
+    return(0);
+  }
+
+  if(currentNode->right != NULL)
+  {
+    run = currentNode->right;
+    while(run->left != NULL)
+    {
+      run = run->left;
+    }
+    return(run->data);
+  }
+
+  Node *x = currentNode;
+  Node *y = currentNode->parent;
+
+  while((y->parent != NULL)&&(x == y->right))
+  {
+    x = y;
+    y = y->parent;
+  }
+
+  return(y->data);
+
+}
+
+
 void freeTree(Node *root)
 {
   if(root != NULL)
   {
     freeTree(root->left);
     freeTree(root->right);
-    printf("We are freeing the node : %p \n",(void *)root);
+    printf("Node is freed : %p \n", (void *)root);
     free(root);
     root = NULL;
   }
 }
-
