@@ -1,63 +1,32 @@
 class bstNode:
-    def __init__(self, newData:any):
+    def __init__(self, newData:int):
         self.data = newData
-        self.right = None
         self.left = None
+        self.right = None
         self.parent = None
 
-
-class binaryTree:
-
-    #Static Methods Declarations
+class bstTree:
 
     @staticmethod
-    def _inorderTraversal(tNode:bstNode):
-        if tNode != None:
-            binaryTree._inorderTraversal(tNode.left)
-            print(f'[{tNode.data}]', end='->')
-            binaryTree._inorderTraversal(tNode.right)
-
-    @staticmethod
-    def _preorderTraversal(tNode:bstNode):
-        if tNode != None:
-            print(f'[{tNode.data}]', end='->')
-            binaryTree._preorderTraversal(tNode.left)
-            binaryTree._preorderTraversal(tNode.right)
-
-    @staticmethod
-    def _postorderTraversal(tNode:bstNode):
-        if tNode != None:
-            binaryTree._postorderTraversal(tNode.left)
-            binaryTree._postorderTraversal(tNode.right)
-            print(f'[{tNode.data}]', end='->')
-
-    @staticmethod
-    def _searchNode(tNode:bstNode, searchData:any) -> bstNode:
-        run = tNode
-
-        while run != None:
-            if run.data == searchData:
-                break
-            elif searchData < run.data:
-                run = run.left
-            else:
-                run = run.right
-        return run
-
+    def _inorder(r:bstNode):
+        if r != None:
+            bstTree._inorder(r.left)
+            print(f'[{r.data}]', end='->')
+            bstTree._inorder(r.right)
 
     def __init__(self):
-        self.rootNode = None
+        self.root = None
 
     def insertNode(self, newData:int):
         newNode = bstNode(newData)
 
-        if self.rootNode == None:
-            self.rootNode = newNode
+        if self.root == None:
+            self.root = newNode
             return None
         
-        run = self.rootNode
+        run = self.root
 
-        while(True):
+        while True:
             if newData <= run.data:
                 if run.left == None:
                     run.left = newNode
@@ -73,151 +42,111 @@ class binaryTree:
                 else:
                     run = run.right
 
+    def inorder(self):
+        print('[START]', end='->')
+        bstTree._inorder(self.root)
+        print('[END]')
+
+    def searchNode(self, searchData:int)->bstNode:
+        run = self.root
+
+        while run != None:
+            if run.data == searchData:
+                return run
+            elif searchData < run.data:
+                run = run.left
+            elif searchData > run.data:
+                run = run.right
+
+        return None
     
-    def inorderTraversal(self):
-        print('[START]', end='->')
-        binaryTree._inorderTraversal(self.rootNode)
-        print('[END]')
-
-    def preorderTraversal(self):
-        print('[START]', end='->')
-        binaryTree._preorderTraversal(self.rootNode)
-        print('[END]')
-
-    def postorderTraversal(self):
-        print('[START]', end='->')
-        binaryTree._postorderTraversal(self.rootNode)
-        print('[END]')
-
-    def searchNode(self, searchData):
-        z = binaryTree._searchNode(self.rootNode, searchData)
-        print(f'Node is : {z.data} | Node.right : {z.right} | Node.left : {z.left.data}')
-
     def inorderSuccessor(self, searchData:int)->bstNode:
-        z = binaryTree._searchNode(self.rootNode, searchData)
+        currentNode = self.searchNode(searchData)
 
-        if z.right != None:
-            run = z.right
-
+        if currentNode.right != None:
+            run = currentNode.right
             while run.left != None:
                 run = run.left
             return run
         
-        x = z
-        y = z.parent
+        x = currentNode
+        y = currentNode.parent
 
         while y != None and x == y.right:
             x = y
             y = y.parent
         return y
     
+    def remove(self, searchData:int):
+        rNode = self.searchNode(searchData)
 
-    def inorderPredecessor(self, searchData:int)->bstNode:
-        z = binaryTree._searchNode(self.rootNode, searchData)
+        if rNode.left == None:
+            if rNode.parent == None:
+                self.root = rNode.right
+            elif rNode == rNode.parent.left:
+                rNode.parent.left = rNode.right
+            else:
+                rNode.parent.right = rNode.right
+            
+            if rNode.right != None:
+                rNode.right.parent = rNode.parent
 
-        if z.left != None:
-            run = z.left
+        elif rNode.right == None:
+            if rNode.parent == None:
+                self.root = rNode.left
+            elif rNode == rNode.parent.left:
+                rNode.parent.left = rNode.left
+            else:
+                rNode.parent.right = rNode.left
+            rNode.left.parent = rNode.parent
 
-            while run.right != None:
-                run = run.right
-            return run
-        
-        x = z
-        y = z.parent
+        elif rNode.right != None and rNode.left != None:
+            replaceNode = rNode.right
 
-        while y != None and x == y.left:
-            x = y
-            y = y.parent
-        return y
+            while replaceNode.left != None:
+                replaceNode = replaceNode.left
+
+            if replaceNode != rNode.right:
+                replaceNode.parent.left = replaceNode.right
+                if replaceNode.right != None:
+                    replaceNode.right.parent = replaceNode.parent
+                replaceNode.right = rNode.right
+                replaceNode.right.parent = replaceNode
+
+            replaceNode.left = rNode.left
+            replaceNode.left.parent = replaceNode
+
+            if rNode.parent == None:
+                self.root = replaceNode
+            elif rNode == rNode.parent.left:
+                rNode.parent.left = replaceNode
+            else:
+                rNode.parent.right = replaceNode
+
+            replaceNode.parent = rNode.parent
+            
+
+
+b = bstTree()
+
+L = [100, 50, 150, 25, 75, 125, 200, 
+            15, 17, 130, 135]  
     
-    def removeNode(self, rData:int):
-        z = binaryTree._searchNode(self.rootNode, rData)
+for x in L: 
+    b.insertNode(x)
 
-        #Case 1 : If z.left is none(z.right may be none or may not be none)
-        if z.left == None:
+b.inorder()
 
-            #Case a : To check if z is root node
-            if z.parent == None:
-                self.rootNode = z.right
-            
-            #Case b : To check if z is left node of z.parent
-            elif z == z.parent.left:
-                z.parent.left = z.right
+print()
 
-            #Case c : To check if z is right node of z.parent
-            else:
-                z.parent.right = z.right
-            
-            #Important to assign parent to the new node
-            if z.right != None:
-                z.right.parent = z.parent
-        
-        #Case 2 : If z.left is NOT NONE and z.right is none
-        elif z.right == None:
+a = b.searchNode(50)
+print(f'{a.data}')
 
-            #Case a : To check if z is root node
-            if z.parent == None:
-                self.rootNode = z.left
-            
-            #Case b : To check if z is left node of z.parent
-            elif z == z.parent.left:
-                z.parent.left = z.left
+succ = b.inorderSuccessor(50)
 
-            #Case c : To check if z is right node of z.parent
-            else:
-                z.parent.right = z.left
+print(f'Inorder Successor : {succ.data}')
 
-            #Important to assign the parent to the new node
-            z.left.parent = z.parent
+for x in L: 
+    b.remove(x)
 
-        #Case 3 : If zleft is NOT NONE and z.right is NOT NONE
-        elif z.right != None and z.left != None:
-            y = self.inorderSuccessor(rData)
-
-            if y is not z.right:
-
-                y.parent.left = y.right
-                if y.right != None:
-                    y.right.parent = y.parent
-
-                y.right = z.right
-                y.right.parent = y
-
-            y.left = z.left
-            y.left.parent = y
-
-            if z.parent == None:
-                self.rootNode = y
-            elif z == z.parent.left:
-                z.parent.left = y
-            else:
-                z.parent.right = y
-
-            y.parent = z.parent
-
-            del z
-
-
-b1 = binaryTree()
-
-L = [100, 50, 25, 75, 65, 60, 72, 150, 200, 175, 160, 250, 225, 220, 215, 218, 217, 300]
-
-for i in L:
-    b1.insertNode(i)
-
-b1.inorderTraversal()
-
-b1.preorderTraversal()
-
-b1.postorderTraversal()
-
-tNode = b1.inorderSuccessor(100)
-tNode2 = b1.inorderPredecessor(100)
-
-print(f'Inorder Successor : {tNode.data} | Inorder Predessor : {tNode2.data}')
-
-for i in L:
-    b1.removeNode(i)
-
-b1.inorderTraversal()
-
+b.inorder()

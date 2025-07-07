@@ -9,67 +9,160 @@ typedef struct node{
   struct node *left;
   struct node *right;
   struct node *parent;
-}Node;
+}bNode;
 
 int main(int argc, char *argv[], char *envp[])
 {
   //Function Declarations
-  void insertNode(Node **, int);
-  void freeTree(Node *);
-  void inorder(Node *);
-  void preorder(Node *);
-  void postorder(Node *);
-  Node *searchNode(Node *, int);
+  void insertNode(bNode **, int);
+  void inorderTraversal(bNode *);
+  void preorderTraversal(bNode *);
+  void postorderTraversal(bNode *);
+  bNode *inorderSuccessor(bNode *, int);
+  bNode *inorderPredeccessor(bNode *, int);
+  void removeNode(bNode **, int);
+  void freeList(bNode *);
 
   //Varibale Declarations
-  Node *root = NULL;
-  Node *currentNode = NULL;
+  bNode *root = NULL;
+  int arr[13] = {100, 70, 150, 50, 30, 65, 80, 40, 120, 170, 250, 130, 300};
+  int i = 0;
+  bNode *currentNode = NULL;
 
   //Code
-  insertNode(&root, 100);
-  insertNode(&root, 70);
-  insertNode(&root, 80);
-  insertNode(&root, 60);
-  insertNode(&root, 40);
-  insertNode(&root, 110);
-  insertNode(&root, 120);
-  insertNode(&root, 105);
-  insertNode(&root, 118);
-
-  printf("\n\n");
-  printf("Inorder Traversal : ");
-  inorder(root);
-  printf("\n\n");
-
-  printf("Preorder Traversal : ");
-  preorder(root);
-  printf("\n\n");
-
-  printf("Postorder Traversal : ");
-  postorder(root);
-  printf("\n\n");
-
-  currentNode = searchNode(root, 90);
-  if(currentNode != NULL)
+  for(i = 0; i<13; i++)
   {
-    
-    printf("currentNode : %p = %d || Parent : %p\n\n", (void *)currentNode, currentNode->data, (void *)currentNode->parent);
+    insertNode(&root, arr[i]);
   }
-  
-  //Free the tree
-  freeTree(root);
-  root = NULL;
+
+  printf("********** Testing inorderTraversal **********\n");
+  printf("[START]->");
+  inorderTraversal(root);
+  printf("[END] \n");
+  printf("\n");
+
+  printf("********** Testing preorderTraversal **********\n");
+  printf("[START]->");
+  preorderTraversal(root);
+  printf("[END] \n");
+  printf("\n");
+
+  printf("********** Testing postorderTraversal **********\n");
+  printf("[START]->");
+  postorderTraversal(root);
+  printf("[END] \n");
+  printf("\n");
+
+  printf("********** Testing inorderSuccessor **********\n");
+  currentNode = inorderSuccessor(root, 50);
+  if(currentNode == NULL)
+  {
+    printf("Inorder Successor of node is not present in the Tree \n");
+  }
+  else
+  {
+    printf("Inorder Successor = %d \n", currentNode->data);
+  }
+
+  currentNode = inorderSuccessor(root, 100);
+  if(currentNode == NULL)
+  {
+    printf("Inorder Successor of node is not present in the Tree \n");
+  }
+  else
+  {
+    printf("Inorder Successor = %d \n", currentNode->data);
+  }
+  printf("\n");
+
+  printf("********** Testing inorderPredeccessor **********\n");
+  currentNode = inorderPredeccessor(root, 50);
+  if(currentNode == NULL)
+  {
+    printf("Inorder Predeccessor of node is not present in the Tree \n");
+  }
+  else
+  {
+    printf("Inorder Predeccessor = %d \n", currentNode->data);
+  }
+
+  currentNode = inorderPredeccessor(root, 100);
+  if(currentNode == NULL)
+  {
+    printf("Inorder Predeccessor of node is not present in the Tree \n");
+  }
+  else
+  {
+    printf("Inorder Predeccessor = %d \n", currentNode->data);
+  }
+  printf("\n");
+
+  printf("********** Testing remove node **********\n");
+  i = 0;
+  while(i < 13)
+  {
+    removeNode(&root, arr[i]);
+    i++;
+  }
+  printf("\n");
+  printf("Traversals After the Deletion Of Tree \n");
+  printf("[START]->");
+  inorderTraversal(root);
+  printf("[END] \n");
+  printf("\n");
+
+  printf("[START]->");
+  preorderTraversal(root);
+  printf("[END] \n");
+  printf("\n");
+
+  printf("[START]->");
+  postorderTraversal(root);
+  printf("[END] \n");
+  printf("\n");
+
+  printf("********** Testing insertNode() for repopulating the Tree **********\n");
+
+  for(i = 0; i<13; i++)
+  {
+    insertNode(&root, arr[i]);
+  }
+
+  printf("\n");
+
+  printf("********** Testing inorderTraversal **********\n");
+  printf("[START]->");
+  inorderTraversal(root);
+  printf("[END] \n");
+  printf("\n");
+
+  printf("********** Testing preorderTraversal **********\n");
+  printf("[START]->");
+  preorderTraversal(root);
+  printf("[END] \n");
+  printf("\n");
+
+  printf("********** Testing postorderTraversal **********\n");
+  printf("[START]->");
+  postorderTraversal(root);
+  printf("[END] \n");
+  printf("\n");
+
+
+  //Free the List
+  freeList(root);
 
   return(0);
+
 }
 
-Node *createNode(int newData)
+bNode *createNode(int newData)
 {
   //Variable Declarations
-  Node *newNode;
+  bNode *newNode = NULL;
 
   //Code
-  newNode = (Node *)malloc(sizeof(Node));
+  newNode = (bNode *)malloc(sizeof(bNode));
   if(newNode == NULL)
   {
     printf("Failed to allocate the memory to the newNode \n");
@@ -84,141 +177,355 @@ Node *createNode(int newData)
   return(newNode);
 }
 
-void insertNode(Node **root, int newData)
+void insertNode(bNode **root, int newData)
 {
   //Function Declarations
-  Node *createNode(int);
+  bNode *createNode(int);
 
   //Variable Declarations
-  Node *newNode;
-  Node *run;
+  bNode *newNode = NULL;
+  bNode *run = NULL;
 
   //Code
+  newNode = createNode(newData);
+
   if(*root == NULL)
   {
-    *root = createNode(newData);
-    printf("root is created : %p \n", (void *)*root);
+    *root = newNode;
     return;
   }
-  else {
-    run = *root;
-    newNode = createNode(newData);
 
-    while(True)
+  run = *root;
+
+  while(True)
+  {
+    if(newData <= run->data)
     {
-      if(newData <= run->data)
+      if(run->left == NULL)
       {
-        if(run->left == NULL)
-        {
-          run->left = newNode;
-          newNode->parent = run;
-          printf("newNode is inserted at left : %p = %d | Parent : %d \n", (void *)newNode, newNode->data, newNode->parent->data);
-          break;
-        }
-        else {
-          run = run->left;
-        }
+        run->left = newNode;
+        newNode->parent = run;
+        break;
       }
-      else {
-        if(run->right == NULL)
-        {
-          run->right = newNode;
-          newNode->parent = run;
-          printf("newNode is inserted at right : %p = %d | Parent : %d \n", (void *)newNode, newNode->data, newNode->parent->data);
-          break;
-        }
-        else {
-          run = run->right;
-        }
+      else
+      {
+        run = run->left;
+      }
+    }
+    else
+    {
+      if(run->right == NULL)
+      {
+        run->right = newNode;
+        newNode->parent = run;
+        break;
+      }
+      else
+      {
+        run = run->right;
       }
     }
   }
 
 }
 
-void inorder(Node *root)
+void removeNode(bNode **root, int rData)
 {
-  //Varibale Declarations
-  Node *run;
+  //Function Declarations
+  bNode *searchNode(bNode *, int);
+
+  //Variable Declarations
+  bNode *rNode = NULL;
+  bNode *replaceNode = NULL;
 
   //Code
-  run = root;
-
-  if(run != NULL)
+  rNode = searchNode(*root, rData);
+  if(rNode == NULL)
   {
-    inorder(run->left);
-    printf("%d, ", run->data);
-    inorder(run->right);
+    printf("Node to be delete : %d is not present in the Tree \n", rData);
+    return;
   }
+
+  //Case 1 : rNode->left is NULL but rNode->right may be NULL or may not be NULL
+  if(rNode->left == NULL)
+  {
+    if(rNode->parent == NULL)
+    {
+      *root = rNode->right;
+    }
+    else
+    {
+      if(rNode == rNode->parent->left)
+      {
+        rNode->parent->left = rNode->right;
+      }
+      else
+      {
+        if(rNode == rNode->parent->right)
+        {
+          rNode->parent->right = rNode->right;
+        }
+      }
+    }
+
+    //If rNode->right != NULL then update the parent of right subtree of rNoded
+    if(rNode->right != NULL)
+    {
+      rNode->right->parent = rNode->parent;
+    }
+
+  }
+  
+  //Case 2 : If rNode->right == NULL and rNode->left != NULL
+  else
+  {
+    if(rNode->right == NULL)
+    {
+      if(rNode->parent == NULL)
+      {
+        *root = rNode->left;
+      }
+      else
+      {
+        if(rNode == rNode->parent->left)
+        {
+          rNode->parent->left = rNode->left;
+        }
+        else
+        {
+          if(rNode == rNode->parent->right)
+          {
+            rNode->parent->right = rNode->left;
+          }
+        }
+      }
+
+      rNode->left->parent = rNode->parent;
+
+    }
+
+    //Case 3 : If rNode has both the sub-trees
+    if((rNode->right != NULL) && (rNode->left != NULL))
+    {
+      replaceNode = rNode->right;
+      while(replaceNode->left != NULL)
+      {
+        replaceNode = replaceNode->left;
+      }
+
+      if(replaceNode != rNode->right)
+      {
+        replaceNode->parent->left = replaceNode->right;
+        if(replaceNode->right != NULL)
+        {
+          replaceNode->right->parent = replaceNode->parent;
+        }
+
+        replaceNode->right = rNode->right;
+        replaceNode->right->parent = replaceNode;
+
+      }
+
+      replaceNode->left = rNode->left;
+      replaceNode->left->parent = replaceNode;
+
+      if(rNode->parent == NULL)
+      {
+        *root = replaceNode;
+      }
+      else
+      {
+        if(rNode == rNode->parent->left)
+        {
+          rNode->parent->left = replaceNode;
+        }
+        else
+        {
+          if(rNode == rNode->parent->right)
+          {
+            rNode->parent->right = replaceNode;
+          }
+        }
+      }
+
+      replaceNode->parent = rNode->parent;
+
+    }
+
+  }
+
+  printf("We are freeing the node : %p || %d \n", (void *)rNode, rNode->data);
+  free(rNode);
+  rNode = NULL;
+
 }
 
-void preorder(Node *root)
+bNode *searchNode(bNode *root, int searchData)
 {
   //Variable Declarations
-  Node *run;
-
-  //Code
-  run = root;
-
-  if(run != NULL)
-  {
-    printf("%d, ", run->data);
-    preorder(run->left);
-    preorder(run->right);
-  }
-}
-
-void postorder(Node *root)
-{
-  //Varibale Declarations
-  Node *run;
-
-  //Code
-  run = root;
-
-  if(run != NULL)
-  {
-    postorder(run->left);
-    postorder(run->right);
-    printf("%d, ", run->data);
-  }
-}
-
-Node *searchNode(Node *root, int searchData)
-{
-  //Variable Declarations
-  Node *run;
+  bNode *run = NULL;
 
   //Code
   run = root;
 
   while(run != NULL)
   {
-    if(searchData == run->data)
+    if(run->data == searchData)
     {
       return(run);
     }
-    else {
-      if(searchData <= run->data)
+    else
+    {
+      if(searchData < run->data)
       {
         run = run->left;
       }
-      else {
+      else
+      {
         run = run->right;
       }
     }
   }
-  
-  printf("searchData : %d is not found in the Tree \n", searchData);
   return(NULL);
 }
 
-void freeTree(Node *root)
+void inorderTraversal(bNode *root)
 {
+  //Variable Declarations
+  bNode *run = NULL;
+
+  //Code
+  run = root;
+
+  if(run != NULL)
+  {
+    inorderTraversal(run->left);
+    printf("%d->", run->data);
+    inorderTraversal(run->right);
+  }
+}
+
+void preorderTraversal(bNode *root)
+{
+  //Variable Declarations
+  bNode *run = NULL;
+
+  //Code
+  run = root;
+
+  if(run != NULL)
+  {
+    printf("%d->", run->data);
+    preorderTraversal(run->left);
+    preorderTraversal(run->right);
+  }
+}
+
+void postorderTraversal(bNode *root)
+{
+  //Variable Declarations
+  bNode *run = NULL;
+
+  //Code
+  run = root;
+
+  if(run != NULL)
+  {
+    postorderTraversal(run->left);
+    postorderTraversal(run->right);
+    printf("%d->", run->data);
+  }
+}
+
+bNode *inorderSuccessor(bNode *root, int searchData)
+{
+  //Function Declarations
+  bNode *searchNode(bNode *, int);
+
+  //Variable Declarations
+  bNode *run = NULL;
+  bNode *currentNode = NULL;
+  bNode *parentNode = NULL;
+
+  //Code
+  currentNode = searchNode(root, searchData);
+  if(currentNode == NULL)
+  {
+    printf("searchData : %d is not available in the Tree \n", searchData);
+    return(NULL);
+  }
+
+  if(currentNode->right != NULL)
+  {
+    run = currentNode->right;
+
+    while(run->left != NULL)
+    {
+      run = run->left;
+    }
+    return(run);
+  }
+
+  parentNode = currentNode->parent;
+
+  while((parentNode->parent != NULL) && (currentNode == parentNode->right))
+  {
+    currentNode = parentNode;
+    parentNode = parentNode->parent;
+  }
+
+  return(parentNode);
+
+}
+
+bNode *inorderPredeccessor(bNode *root, int searchData)
+{
+  //Function Declarations
+  bNode *searchNode(bNode *, int);
+
+  //Variable Declarations
+  bNode *run = NULL;
+  bNode *currentNode = NULL;
+  bNode *parentNode = NULL;
+
+  //Code
+  currentNode = searchNode(root, searchData);
+  if(currentNode == NULL)
+  {
+    printf("searchData : %d is not available in the Tree \n", searchData);
+    return(NULL);
+  }
+
+  if(currentNode->left != NULL)
+  {
+    run = currentNode->left;
+
+    while(run->right != NULL)
+    {
+      run = run->right;
+    }
+    return(run);
+  }
+
+  parentNode = currentNode->parent;
+
+  while((parentNode->parent != NULL) && (currentNode == parentNode->left))
+  {
+    currentNode = parentNode;
+    parentNode = parentNode->parent;
+  }
+
+  return(parentNode);
+
+}
+
+void freeList(bNode *root)
+{
+  //Code
   if(root != NULL)
   {
-    freeTree(root->left);
-    freeTree(root->right);
+    freeList(root->left);
+    freeList(root->right);
     printf("We are freeing the node : %p \n", (void *)root);
     free(root);
     root = NULL;

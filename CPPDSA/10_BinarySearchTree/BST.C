@@ -19,6 +19,7 @@ int main(int argc, char *argv[], char *envp[])
   void preorderTraversal(Node *);
   void postorderTraversal(Node *);
   int inorderSuccessor(Node *, int);
+  void remove(Node **, int);
   void freeTree(Node *);
 
   //Variable Declarations
@@ -48,7 +49,36 @@ int main(int argc, char *argv[], char *envp[])
   postorderTraversal(root);
   printf("[END]\n");
 
-  printf("Inorder Successor : %d \n", inorderSuccessor(root, 120));
+  printf("Inorder Successor : %d \n\n", inorderSuccessor(root, 120));
+
+
+  // printf("\n\n\n Testing for 100 \n\n\n");
+  // remove(root, 100);
+
+
+  printf("Testing remove \n");
+  i = 0;
+
+  while(i <13)
+  {
+    remove(&root, arr[i]);
+    i++;
+  }
+  
+  printf("\n\n");
+  printf("Inorder Traversal : ");
+  inorderTraversal(root);
+  printf("[END]\n");
+
+  for(i = 0; i<13; i++)
+  {
+    insertNode(&root, arr[i]);
+  }
+
+  printf("\n\n");
+  printf("Inorder Traversal : ");
+  inorderTraversal(root);
+  printf("[END]\n");
 
   freeTree(root);
 
@@ -124,6 +154,115 @@ void insertNode(Node **root, int newData)
       }
     }
   }
+
+}
+
+void remove(Node **root, int rData)
+{
+  //Function Declarations
+  Node *searchNode(Node *, int);
+
+  //Variable Declarations
+  Node *rNode;
+  Node *replaceNode;
+
+  //Code
+  rNode = searchNode(*root, rData);
+  if(rNode == NULL)
+  {
+    printf("Data to be removed is not present in the Tree : %d \n", rData);
+    return;
+  }
+
+  if(rNode->left == NULL)
+  {
+    if(rNode->parent == NULL)
+    {
+      *root = rNode->right;
+    }
+    else {
+      if(rNode == rNode->parent->left)
+      {
+        rNode->parent->left = rNode->right;
+      }
+      else {
+        rNode->parent->right = rNode->right;
+      }
+    }
+
+    if(rNode->right != NULL)
+    {
+      rNode->right->parent = rNode->parent;
+    }
+  }
+  else {
+    if(rNode->right == NULL)
+    {
+      if(rNode->parent == NULL)
+      {
+        *root = rNode->left;
+      }
+      else {
+        if(rNode == rNode->parent->left)
+        {
+          rNode->parent->left = rNode->left;
+        }
+        else {
+          rNode->parent->right = rNode->left;
+        }
+      }
+
+      rNode->left->parent = rNode->parent;
+    }
+    else {
+      if((rNode->right != NULL)&&(rNode->left != NULL))
+      {
+        replaceNode = rNode->right;
+
+        while(replaceNode->left != NULL)
+        {
+          replaceNode = replaceNode->left;
+        }
+        
+        if(replaceNode != rNode->right)
+        {
+          replaceNode->parent->left = replaceNode->right;
+          if(replaceNode->right != NULL)
+          {
+            replaceNode->right->parent = replaceNode->parent;
+          }
+          
+          replaceNode->right = rNode->right;
+          replaceNode->right->parent = replaceNode;
+
+        }
+
+        replaceNode->left = rNode->left;
+        replaceNode->left->parent = replaceNode;
+
+        if(rNode->parent == NULL)
+        {
+          *root = replaceNode;
+        }
+        else {
+          if(rNode == rNode->parent->left)
+          {
+            rNode->parent->left = replaceNode;
+          }
+          else {
+            rNode->parent->right = replaceNode;
+          }
+        }
+
+        replaceNode->parent = rNode->parent;
+
+      }
+    }
+  }
+  
+  printf("Node to be removed : %d || %p \n", rNode->data, (void *)rNode);
+  free(rNode);
+  rNode = NULL;
 
 }
 
