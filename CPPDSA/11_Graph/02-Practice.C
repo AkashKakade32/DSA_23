@@ -308,21 +308,21 @@ int main(int argc, char *argv[], char *envp[])
 
     initGraph(&g);
 
-    int arr[100];
+    int arr[1000];
 
-    for(int i = 0; i<100; i++)
+    for(int i = 0; i<1000; i++)
     {
-        arr[i] = rand() % 100;
+        arr[i] = rand() % 1000;
     }
 
-    for(int i = 0; i<100; i++)
+    for(int i = 0; i<1000; i++)
     {
         addVertex(&g, arr[i]);
     }
 
-    for(int i = 0; i<100; i++)
+    for(int i = 0; i<1000; i++)
     {
-        addEdge(&g, arr[rand()%100], arr[rand()%100]);
+        addEdge(&g, arr[rand()%1000], arr[rand()%1000]);
     }
 
     removeVertex(&g, 83);
