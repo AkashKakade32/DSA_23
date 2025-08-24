@@ -1,3 +1,8 @@
+class color:
+    WHITE = 1
+    GRAY = 2
+    BLACK = 3
+
 class hNode:
     def __init__(self, v:int):
         self.data = v
@@ -44,6 +49,7 @@ class vNode:
     def __init__(self, v:int):
         self.data = v
         self.adjList = hList()
+        self.color = color.WHITE
 
         self.next = None
         self.prev = None
