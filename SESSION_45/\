@@ -1,0 +1,114 @@
+class hnode:
+    def __init__(self, v:int, w:int):
+        self.v = v
+        self.w = w
+        self.next = None
+        self.prev = None
+
+class hlist:
+    @staticmethod
+    def genericInsert(startNode:hnode, midNode:hnode, endNode:hnode):
+        midNode.next = endNode
+        midNode.prev = startNode
+
+        startNode.next = midNode
+        endNode.prev = midNode
+
+    @staticmethod
+    def genericSearch(headNode:hnode, v:int):
+        run = headNode.next
+
+        while run != headNode:
+            if run.v == v:
+                return run
+            run = run.next
+
+        return None
+
+    def __init__(self):
+        self.headNode = hnode(None, None)
+        self.headNode.next = self.headNode
+        self.headNode.prev = self.headNode
+
+    def insertEnd(self, v:int, w:int):
+        hlist.genericInsert(self.headNode.prev, hnode(v,w), self.headNode)
+
+
+
+class vnode:
+    def __init__(self, v:int):
+        self.v = v
+        self.adjList = hlist()
+
+        self.next = None
+        self.prev = None
+
+
+class vlist:
+    @staticmethod
+    def genericInsert(startNode:vnode, midNode:vnode, endNode:vnode):
+        midNode.next = endNode
+        midNode.prev = startNode
+
+        startNode.next = midNode
+        endNode.prev = midNode
+
+    @staticmethod
+    def genericSearch(headNode:vnode, v:int):
+        run = headNode.next
+
+        while run != headNode:
+            if run.v == v:
+                return run
+            run = run.next
+        return None
+    
+    def __init__(self):
+        self.headNode = vnode(None)
+        self.headNode.next = self.headNode
+        self.headNode.prev = self.headNode
+
+    def insertEnd(self, v):
+        vlist.genericInsert(self.headNode.prev, vnode(v), self.headNode)
+
+
+class graph:
+    def __init__(self):
+        self.verticalList = vlist()
+
+    def insertVertex(self, v:int):
+        self.verticalList.insertEnd(v)
+
+    def insertEdge(self, startData:int, endData:int, weight:int):
+        startNode = vlist.genericSearch(self.verticalList.headNode, startData)
+        endNode = vlist.genericSearch(self.verticalList.headNode, endData)
+
+        startNode.adjList.insertEnd(endData, weight)
+        endNode.adjList.insertEnd(startData, weight)
+
+    def printGraph(self):
+        run = self.verticalList.headNode.next
+
+        while run != self.verticalList.headNode:
+            print(f'[{run.v}]\t-->\t', end='')
+
+            hRun = run.adjList.headNode.next
+
+            while hRun != run.adjList.headNode:
+                print(f'[{hRun.v} ({hRun.w})]-->', end='')
+                hRun = hRun.next
+            run = run.next
+            print('[END]')
+
+
+g = graph()
+
+for i in range(1,11):
+    g.insertVertex(i)
+
+L = [(1,2,2), (1,3,5), (2,3,1), (2,4,6), (2,5,3), (2,11,10), (3,7,8), (4,8,12), (9,10,3), (8,10,4), (11,1,19), (11,10,1), (11,8,5), (6,7,4)]
+
+for (i,j,k) in L:
+    g.insertEdge(i,j,k)
+
+g.printGraph()
