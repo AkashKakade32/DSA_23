@@ -55,6 +55,7 @@ class Graph
     void addVertex(const int);
     void addEdge(const int, const int, const int);
     void removeEdge(const int srcData, const int destData);
+    void removeVertex(const int);
 
     friend std::ostream& operator<<(std::ostream &out, const Graph &g);
 
@@ -182,6 +183,50 @@ void Graph::removeEdge(int src, int dest)
 
 }
 
+void Graph::removeVertex(const int vData)
+{
+    VertexNodes *temp = findVertex(vData);
+
+    if(temp == nullptr)
+    {
+        std::cout<<"Vertex is not present in the Graph"<<std::endl;
+        return;
+    }
+
+    EdgeNodes *edgeTemp = temp->edgeList->next;
+
+    while(edgeTemp != nullptr)
+    {
+        VertexNodes *edgeInV = findVertex(edgeTemp->edgeData);
+
+        EdgeNodes *vInEdge = findEdge(edgeInV, vData);
+
+        EdgeNodes *tempEdgeNode = edgeInV->edgeList;
+        while(tempEdgeNode->next != vInEdge)
+        {
+            tempEdgeNode = tempEdgeNode->next;
+        }
+        tempEdgeNode->next = vInEdge->next;
+        delete vInEdge;
+
+        EdgeNodes* edgeTempNext = edgeTemp->next;
+        delete edgeTemp;
+        edgeTemp = edgeTempNext;
+    }
+
+    delete temp->edgeList;
+
+    VertexNodes *mainTemp = vertexList;
+
+    while(mainTemp->next != temp)
+    {
+        mainTemp = mainTemp->next;
+    }
+    mainTemp->next = temp->next;
+    delete temp;
+
+}
+
 Graph::~Graph()
 {
     VertexNodes *temp = vertexList->next;
@@ -256,6 +301,28 @@ int main()
 
     g.removeEdge(20,80);
     g.removeEdge(50,70);
+
+    std::cout<<g;
+
+    std::cout<<"Removing Vertices from Graph :"<<std::endl;
+    for(int i = 1; i<=10; i++)
+    {
+        g.removeVertex(i * 10);
+    }
+
+    std::cout<<g;
+
+    std::cout<<"Again Populating the Graph :"<<std::endl;
+
+    for(int i = 1; i<=10; i++)
+    {
+        g.addVertex(i * 10);
+    }
+
+    for(int i = 0; i < size; i++)
+    {
+        g.addEdge(arr[i][0], arr[i][1], arr[i][2]);
+    }
 
     std::cout<<g;
 
